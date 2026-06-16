@@ -80,7 +80,7 @@ jobs:
       # if: steps.tf_plan.outcome == 'failure' && steps.tf_plan.outputs.plan_output != ''
       # uses: marocchino/sticky-pull-request-comment@v2
       # with:
-      #   token: ${{ secrets.GITHUB_TOKEN }}
+      #   token: ${{ secrets.DEV_TF_CICD_GIT_TOKEN }}
       #   header: "Terraform Plan Results"
       #   message: |
       #     Terraform plan detected potential issues. Please review the [Terraform Plan](./#terraform-practice/Environment/Dev/tfplan.json) for details.
