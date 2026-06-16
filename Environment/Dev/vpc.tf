@@ -69,7 +69,7 @@ resource "aws_subnet" "expense_db_subnet" {
 
 resource "aws_db_subnet_group" "default" {
   name       = "${local.resource_name}"
-  subnet_ids = aws_subnet.database[*].id
+  subnet_ids = aws_subnet.expense_db_subnet[*].id
 
   tags = merge(
     var.common_tags,
@@ -86,7 +86,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id
+  subnet_id     = aws_subnet.expense_public_subnet[0].id
 
   tags = merge(
     var.common_tags,
@@ -102,7 +102,7 @@ resource "aws_nat_gateway" "nat" {
 ## Public Route table ##
 
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.expense_vpc.id
 
   tags = merge(
     var.common_tags,
@@ -115,7 +115,7 @@ resource "aws_route_table" "public" {
 
 #### Private Route table ####
 resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.expense_vpc.id
 
   tags = merge(
     var.common_tags,
@@ -128,7 +128,7 @@ resource "aws_route_table" "private" {
 
 #### Database Route table ####
 resource "aws_route_table" "database" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.expense_vpc.id
 
   tags = merge(
     var.common_tags,
