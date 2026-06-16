@@ -38,7 +38,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          role-to-assume: arn:aws:iam::334192025472:role/GitHubActionsRole
+          role-to-assume: arn:aws:iam::334192025472:role/github-actions-tf-plan-dev
           aws-region: us-east-1
 
       - name: Initialize Terraform & Backend
