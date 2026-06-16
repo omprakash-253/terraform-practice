@@ -1,0 +1,104 @@
+name: "1. TF PR Validation & CheckOV Scan"
+on:
+  pull_request:
+    branches:
+      - main
+  
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  validate-and-scan:
+    name: "Terraform PR Validation & Checkov Scan"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform-practice
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.15.6
+      
+      - name: Run Checkov Scan
+        id: checkov_scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+           directory: ./terraform-practice
+           frameworks: terraform
+           output_format: cli
+           output_file: checkov_report.txt
+
+      - name: Authenticate to AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          role-to-assume: arn:aws:iam::334192025472:role/github-actions-tf-plan-dev
+          aws-region: us-east-1
+
+      - name: Initialize Terraform & Backend
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Generate Terraform Plan
+        id: tf_plan
+        run: |
+          terraform plan -no-color -out=tfplan
+          terraform show -no-color tfplan > tfplan.json
+        continue-on-error: true
+      
+      - name: Upload Checkov Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-report
+          path: ./terraform-practice/Environment/Dev/checkov_report.txt
+      
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-{{ github.event.pull_request.number }}
+          path: ./terraform-practice/Environment/Dev/tfplan.json
+          retention-days: 2
+          
+      - name: Post Checkov Results as PR Comment
+        if: steps.checkov_scan.outcome == 'failure'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          header: "Checkov Scan Results"
+          message: |
+            Checkov scan detected issues in the Terraform code. Please review the [Checkov Report](./terraform-practice/Environment/Dev/checkov_report.txt) for details.
+      
+  #  - name: Post Terraform Plan Results as PR Comment
+      # if: steps.tf_plan.outcome == 'failure' && steps.tf_plan.outputs.plan_output != ''
+      # uses: marocchino/sticky-pull-request-comment@v2
+      # with:
+      #   token: ${{ secrets.DEV_TF_CICD_GIT_TOKEN }}
+      #   header: "Terraform Plan Results"
+      #   message: |
+      #     Terraform plan detected potential issues. Please review the [Terraform Plan](./#terraform-practice/Environment/Dev/tfplan.json) for details.
+
+      - name: Post Plan output to PR Comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const planOutput = fs.readFileSync('./terraform-practice/Environment/Dev/tfplan.json', 'utf8');
+            const commentBody = `Terraform Plan Output:\n\`\`\`json\n${planOutput}\n\`\`\``;
+            const { data: comment } = await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: commentBody
+            });
+
+
+
