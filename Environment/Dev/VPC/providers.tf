@@ -10,7 +10,7 @@ terraform {
         key    = "prod/vpc-dev/terraform.tfstate"
         region = "us-east-1"
         encrypt = true
-        dynamodb_table = "remote-state-lock"
+        use_lockfile = "remote-state-lock"
     }
 }
 

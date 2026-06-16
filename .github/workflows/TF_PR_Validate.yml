@@ -42,7 +42,7 @@ jobs:
         if: always() # Guarantees the report uploads on both success and failure of the scan
         with:
           name: checkov-report
-          path: ./Environment/Dev/checkov_report.txt
+          path: ./Environment/Dev/VPC/checkov_report.txt
 
 
       - name: Authenticate to AWS via OIDC
@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tfplan-{{ github.event.pull_request.number }}
-          path: ./Environment/Dev/tfplan.json
+          path: ./Environment/Dev/VPC/tfplan.json
           retention-days: 2
           
       - name: Post Checkov Results as PR Comment
@@ -80,7 +80,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           header: "Checkov Scan Results"
           message: |
-            Checkov scan detected issues in the Terraform code. Please review the [Checkov Report](./Environment/Dev/checkov_report.txt) for details.
+            Checkov scan detected issues in the Terraform code. Please review the [Checkov Report](./Environment/Dev/VPC/checkov_report.txt) for details.
       
   #  - name: Post Terraform Plan Results as PR Comment
       # if: steps.tf_plan.outcome == 'failure' && steps.tf_plan.outputs.plan_output != ''
@@ -89,7 +89,7 @@ jobs:
       #   token: ${{ secrets.DEV_TF_CICD_GIT_TOKEN }}
       #   header: "Terraform Plan Results"
       #   message: |
-      #     Terraform plan detected potential issues. Please review the [Terraform Plan](./Environment/Dev/tfplan.json) for details.
+      #     Terraform plan detected potential issues. Please review the [Terraform Plan](./Environment/Dev/VPC/tfplan.json) for details.
 
       - name: Post Plan output to PR Comment
         uses: actions/github-script@v7
@@ -97,7 +97,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const planOutput = fs.readFileSync('./Environment/Dev/tfplan.json', 'utf8');
+            const planOutput = fs.readFileSync('./Environment/Dev/VPC/tfplan.json', 'utf8');
             const commentBody = `Terraform Plan Output:\n\`\`\`json\n${planOutput}\n\`\`\``;
             const { data: comment } = await github.rest.issues.createComment({
               issue_number: context.payload.pull_request.number,
