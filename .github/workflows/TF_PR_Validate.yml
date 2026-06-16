@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch: 
   
 permissions:
   contents: read
@@ -15,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform-practice
+        working-directory: ./terraform-practice/Environment
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
