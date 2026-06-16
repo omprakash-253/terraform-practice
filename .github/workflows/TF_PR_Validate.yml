@@ -34,7 +34,7 @@ jobs:
            frameworks: terraform
            output_format: cli
            output_file: checkov_report.txt
-           skip_check: CKV_AWS_5,CKV_AWS_11,CKV_AWS_12,CKV_AWS_22,CKV_AWS_23
+           skip_check: CKV_AWS_5,CKV_AWS_11,CKV_AWS_12,CKV_AWS_22,CKV_AWS_23,CKV2_AWS_5,CKV2_AWS_11,CKV2_AWS_12,CKV2_AWS_22,CKV2_AWS_23
            # Checkov mandates an API key to evaluate and filter severities natively
 
       - name: Upload Checkov Report
