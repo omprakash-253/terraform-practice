@@ -30,7 +30,7 @@ jobs:
         id: checkov_scan
         uses: bridgecrewio/checkov-action@master
         with:
-           directory: ./terraform-practice
+           directory: ./Environment/Dev
            frameworks: terraform
            output_format: cli
            output_file: checkov_report.txt
