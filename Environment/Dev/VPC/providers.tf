@@ -1,0 +1,20 @@
+terraform {
+    required_providers {
+        aws = {
+            source = "hashicorp/aws"
+            version = "6.50.0"
+        }
+    }
+    backend "s3" {
+        bucket = "omansh-remote-state1"
+        key    = "prod/vpc-dev/terraform.tfstate"
+        region = "us-east-1"
+        encrypt = true
+        dynamodb_table = "remote-state-lock"
+    }
+}
+
+provider "aws" {
+    region = "us-east-1"
+}
+

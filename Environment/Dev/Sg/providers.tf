@@ -7,7 +7,7 @@ terraform {
     }
     backend "s3" {
         bucket = "omansh-remote-state1"
-        key    = "prod/ec2/terraform.tfstate"
+        key    = "prod/sg-dev/terraform.tfstate"
         region = "us-east-1"
         encrypt = true
         dynamodb_table = "remote-state-lock"
