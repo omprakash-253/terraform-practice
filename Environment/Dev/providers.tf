@@ -6,7 +6,7 @@ terraform {
         }
     }
     backend "s3" {
-        bucket = "omansh-remote-state"
+        bucket = "omansh-remote-state1"
         key    = "prod/ec2/terraform.tfstate"
         region = "us-east-1"
         encrypt = true
