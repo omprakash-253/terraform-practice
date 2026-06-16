@@ -30,7 +30,7 @@ resource "aws_internet_gateway" "gw" {
 resource "aws_subnet" "expense_public_subnet" {
     count = length(var.public_subnet_cidr)
     availability_zone = local.az_names[count.index]
-    map_public_ip_on_launch = true
+    map_public_ip_on_launch = false
     cidr_block = var.public_subnet_cidr[count.index]
     vpc_id = aws_vpc.expense_vpc.id
     
@@ -45,6 +45,7 @@ resource "aws_subnet" "expense_private_subnet" {
     availability_zone = local.az_names[count.index]
     cidr_block = var.private_subnet_cidr[count.index]
     vpc_id = aws_vpc.expense_vpc.id
+    map_public_ip_on_launch = false
     
     tags = merge(var.common_tags, {
         Name = "${local.resource_name}-private-${local.az_names[count.index]}"
@@ -57,6 +58,7 @@ resource "aws_subnet" "expense_db_subnet" {
     availability_zone = local.az_names[count.index]
     cidr_block = var.db_subnet_cidr[count.index]
     vpc_id = aws_vpc.expense_vpc.id
+    map_public_ip_on_launch = false
     
     tags = merge(var.common_tags, {
         Name = "${local.resource_name}-db-${local.az_names[count.index]}"
