@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Environment/Dev
+        working-directory: ./Environment/Dev/VPC
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
         id: checkov_scan
         uses: bridgecrewio/checkov-action@master
         with:
-           directory: ./Environment/Dev
+           directory: ./Environment/Dev/VPC
            frameworks: terraform
            output_format: cli
            output_file: checkov_report.txt
