@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Environment
+        working-directory: ./Environment/Dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -92,7 +92,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const planOutput = fs.readFileSync('./terraform-practice/Environment/Dev/tfplan.json', 'utf8');
+            const planOutput = fs.readFileSync('./Environment/Dev/tfplan.json', 'utf8');
             const commentBody = `Terraform Plan Output:\n\`\`\`json\n${planOutput}\n\`\`\``;
             const { data: comment } = await github.rest.issues.createComment({
               issue_number: context.payload.pull_request.number,
