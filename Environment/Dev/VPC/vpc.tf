@@ -14,7 +14,7 @@ resource "aws_vpc" "expense_vpc" {
 
 
 resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.e.id
+  vpc_id = aws_vpc.expense_vpc.id
 
   tags = merge(
     var.common_tags,
